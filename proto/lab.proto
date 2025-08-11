@@ -1,0 +1,27 @@
+// Protocol Buffers 定义文件
+// 实验室信息相关的数据结构定义
+// 包含实验室的基本信息、创建者、所有者、角色管理等字段
+
+syntax = "proto3";
+
+package lab;
+
+import "role.proto";
+
+option go_package = "happyAssistant/internal/model";
+
+// 实验室信息
+// 定义实验室的基本信息结构，包含实验室ID、名称、描述、权限管理等
+message Lab {
+  // @gotags: json:"id,omitempty" bson:"_id"
+  string id = 1;                           // 实验室唯一标识符
+  string name = 2;                         // 实验室名称
+  string desc = 3;                         // 实验室描述信息
+  string create_id = 4;                    // 实验室创建者ID
+  string owner_id = 5;                     // 实验室所有者ID
+  int64 create_at = 6;                     // 实验室创建时间戳（Unix时间戳）
+  int64 update_at = 7;                     // 实验室信息最后更新时间戳（Unix时间戳）
+  repeated string role_ids = 8;            // 实验室中定义的角色ID列表
+  map<string, string> user_role_map = 9;   // 用户角色映射表，key为用户ID，value为角色ID
+  repeated role.Role roles = 10;           // 实验室中定义的完整角色信息列表
+}

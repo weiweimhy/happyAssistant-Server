@@ -1,0 +1,69 @@
+// Protocol Buffers 定义文件
+// 描述服务器与客户端之间的通信协议
+// 包含基础请求响应协议、登录协议等核心通信协议
+
+syntax = "proto3";
+
+package model;
+
+import "user.proto";
+import "lab.proto";
+import "role.proto";
+
+option go_package = "happyAssistant/internal/model";
+
+// 协议类型枚举
+// 定义所有支持的协议类型，用于标识具体的请求和响应类型
+enum ProtocolType {
+  UNKNOWN = 0;        // 未知协议类型，默认值
+
+  // 登录相关协议
+  LOGIN_REQ = 1;      // 登录请求协议
+  LOGIN_RESP = 2;     // 登录响应协议
+}
+
+// 响应状态码枚举
+// 定义服务器响应的标准状态码，用于统一处理响应结果
+enum RESP_CODE {
+  ERROR = 0;    // 操作失败，表示请求处理过程中发生错误
+  SUCCESS = 1;  // 操作成功，表示请求已成功处理
+}
+
+// 基础请求协议
+// 所有客户端请求的通用包装协议，包含协议类型和具体数据
+message BaseRequest {
+  ProtocolType type = 1;  // 协议类型，用于标识具体的请求类型
+  bytes data = 2;         // 具体请求数据（序列化后的具体协议）
+}
+
+// 基础响应协议
+// 所有服务器响应的通用包装协议，包含结果状态和具体数据
+message BaseResponse {
+  ProtocolType type = 1;  // 协议类型，用于标识具体的响应类型
+  RESP_CODE result = 2;   // 操作结果：SUCCESS(1)表示成功，ERROR(0)表示失败
+  string msg = 3;         // 结果消息，用于描述操作结果或错误信息
+  bytes data = 4;         // 具体响应数据（序列化后的具体协议）
+  int64 timestamp = 5;    // 时间戳，记录响应生成的时间
+}
+
+// 登录请求协议
+// 客户端发送的登录请求，包含微信小程序登录凭证
+message LoginRequest {
+  string js_code = 1;     // 微信小程序登录凭证，用于获取用户openid和session_key
+}
+
+// 登录响应中的实验室信息
+// 专门用于登录响应，包含完整的实验室信息和角色信息
+message LoginLabInfo {
+  lab.Lab lab = 1;                    // 实验室基本信息
+  repeated role.Role roles = 2;       // 实验室中定义的完整角色信息列表
+  string user_role_id = 3;            // 当前用户在实验室中的角色ID
+  role.Role user_role = 4;            // 当前用户在实验室中的完整角色信息
+}
+
+// 登录响应协议
+// 服务器返回的登录响应，包含用户信息和选中的实验室信息
+message LoginResponse {
+  user.User user = 1;           // 用户信息（引用user.proto中的User）
+  LoginLabInfo labInfo = 2;   // 用户当前选中的实验室信息（包含完整角色信息）
+}

@@ -1,0 +1,20 @@
+// Protocol Buffers 定义文件
+// 权限相关的枚举定义
+// 定义系统中所有可用的权限类型，使用位运算进行权限组合
+
+syntax = "proto3";
+
+package permission;
+
+option go_package = "happyAssistant/internal/model";
+
+// 权限枚举
+// 定义系统中所有可用的权限类型，每个权限对应一个位标志
+// 使用位运算可以方便地进行权限的组合和检查
+enum Permission {
+  UNKNOWN = 0;        // 未知权限，默认值
+
+  ORDER_CREATE = 1;   // 创建订单权限 (1 << 0)
+  ORDER_UPDATE = 2;   // 更新订单权限 (1 << 1)
+  ORDER_DELETE = 4;   // 删除订单权限 (1 << 2)
+}

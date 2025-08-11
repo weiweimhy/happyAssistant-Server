@@ -1,0 +1,23 @@
+// Protocol Buffers 定义文件
+// 用户信息相关的数据结构定义
+// 包含用户的基本信息、联系方式、创建时间等字段
+
+syntax = "proto3";
+
+package user;
+
+option go_package = "happyAssistant/internal/model";
+
+// 用户信息
+// 定义用户的基本信息结构，包含用户ID、姓名、头像、联系方式等
+message User {
+  // @gotags: json:"id,omitempty" bson:"_id"
+  string id = 1;              // 用户唯一标识符
+  string name = 2;            // 用户姓名
+  string avatar = 3;          // 用户头像URL地址
+  string phone_number = 4;    // 用户手机号码
+  string email = 5;           // 用户邮箱地址
+  int64 created_at = 6;       // 用户创建时间戳（Unix时间戳）
+  int64 updated_at = 7;       // 用户信息最后更新时间戳（Unix时间戳）
+  repeated string lib_ids = 8; // 用户所属的实验室ID列表
+}

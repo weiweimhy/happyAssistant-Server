@@ -1,0 +1,17 @@
+# 服务端配置
+server:
+  port: 9300
+  route: "/wss"
+
+mongodb:
+  uri: "mongodb://localhost:27017"
+  database: "lzdb_release"
+  username: ""
+  password: ""
+  timeout: 10s
+  opTimeout: 5s
+
+# 日志配置
+log:
+  level: error  # 可选: debug, info, warn, error
+  file: "logs/server.logger"

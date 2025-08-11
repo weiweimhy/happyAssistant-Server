@@ -1,0 +1,23 @@
+# 服务端配置
+server:
+  port: 8080
+  route: "/ws"
+
+# MongoDB配置
+mongodb:
+  uri: "mongodb://localhost:27017"
+  database: "happy_assistant_debug"
+  username: "test"
+  password: "test123"
+  timeout: 10s
+  opTimeout: 5s
+
+# 日志配置
+log:
+  level: info  # 可选: debug, info, warn, error
+  file: ""
+
+# 小程序配置
+wechat:
+  appid: "wx73971fdd331d134d"
+  secret: "949df1a09078578a4b8f5b0960e5545c"

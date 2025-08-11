@@ -1,0 +1,18 @@
+// Protocol Buffers 定义文件
+// 角色信息相关的数据结构定义
+// 包含角色的基本信息、权限标志等字段
+
+syntax = "proto3";
+
+package role;
+
+option go_package = "happyAssistant/internal/model";
+
+// 角色信息
+// 定义角色的基本信息结构，包含角色ID、名称、权限标志等
+message Role {
+  // @gotags: json:"id,omitempty" bson:"_id"
+  string id = 1;                // 角色唯一标识符
+  string name = 2;              // 角色名称
+  uint64 permission_flags = 3;  // 权限标志位，使用位运算表示多个权限的组合
+}
