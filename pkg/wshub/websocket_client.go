@@ -121,7 +121,7 @@ func NewClient(conn *websocket.Conn, opts ...ClientOption) (*Client, error) {
 	}
 	err := conn.SetReadDeadline(time.Now().Add(client.readDeadline))
 	if err != nil {
-		return nil, err
+		return nil, wrapClientErr("init: set read deadline", err)
 	}
 
 	return client, nil
@@ -136,24 +136,23 @@ func (c *Client) read() {
 	for {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
-			fmt.Println("read error:", err)
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				c.Close()
-				return
-			}
-
-			if c.OnError != nil {
-				c.OnError(c, err)
+			if websocket.IsUnexpectedCloseError(err,
+				websocket.CloseGoingAway,
+				websocket.CloseAbnormalClosure,
+				websocket.CloseNormalClosure,
+			) {
+				if c.OnError != nil {
+					c.OnError(c, wrapClientErr("read: unexpected close", err))
+				}
 			}
 			c.Close()
-
 			return
 		}
 
 		err = c.conn.SetReadDeadline(time.Now().Add(c.readDeadline))
 		if err != nil {
 			if c.OnError != nil {
-				c.OnError(c, err)
+				c.OnError(c, wrapClientErr("read: set read deadline", err))
 			}
 			c.Close()
 			return
@@ -169,7 +168,7 @@ func (c *Client) writeMessage(messageType int, data []byte) bool {
 	err := c.conn.SetWriteDeadline(time.Now().Add(c.writeDeadline))
 	if err != nil {
 		if c.OnError != nil {
-			c.OnError(c, err)
+			c.OnError(c, wrapClientErr("write: set write deadline", err))
 		}
 		c.Close()
 		return false // 表示失败
@@ -178,7 +177,7 @@ func (c *Client) writeMessage(messageType int, data []byte) bool {
 	err = c.conn.WriteMessage(messageType, data)
 	if err != nil {
 		if c.OnError != nil {
-			c.OnError(c, err)
+			c.OnError(c, wrapClientErr(fmt.Sprintf("write: write message type=%d", messageType), err))
 		}
 		c.Close()
 		return false // 表示失败
@@ -205,7 +204,8 @@ func (c *Client) write() {
 		select {
 		case msg, ok := <-c.sendBuffer:
 			if !ok {
-				c.writeMessage(websocket.CloseMessage, []byte{})
+				// 通道已关闭，通常是主动关闭或读协程错误触发的关闭
+				// 这里不要再写 Close 帧，避免在连接已关闭时写入导致报错
 				return
 			}
 			if !c.writeMessage(msg.Type, msg.Data) {
@@ -294,7 +294,7 @@ func (c *Client) Close() {
 		err := c.conn.Close()
 		if err != nil {
 			if c.OnError != nil {
-				c.OnError(c, err)
+				c.OnError(c, wrapClientErr("close: conn close", err))
 			}
 			return
 		}
@@ -302,4 +302,12 @@ func (c *Client) Close() {
 			c.OnClose(c)
 		}
 	})
+}
+
+// wrapClientErr 为客户端相关错误添加上下文，便于日志定位
+func wrapClientErr(operation string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("wshub/client %s: %w", operation, err)
 }

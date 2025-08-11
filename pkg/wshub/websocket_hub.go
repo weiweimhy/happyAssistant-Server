@@ -85,7 +85,7 @@ func (wsh *WebSocketHub) processRequest(w http.ResponseWriter, r *http.Request) 
 	conn, err := wsh.UpGrader.Upgrade(w, r, nil)
 	if err != nil {
 		if wsh.OnError != nil {
-			wsh.OnError(nil, err)
+			wsh.OnError(nil, wrapHubErr("upgrade", err))
 		}
 		return
 	}
@@ -93,7 +93,7 @@ func (wsh *WebSocketHub) processRequest(w http.ResponseWriter, r *http.Request) 
 	baseClient, err := NewClient(conn, wsh.clientOptions...)
 	if err != nil {
 		if wsh.OnError != nil {
-			wsh.OnError(nil, err)
+			wsh.OnError(nil, wrapHubErr("new client", err))
 		}
 		return
 	}
@@ -112,7 +112,7 @@ func (wsh *WebSocketHub) processRequest(w http.ResponseWriter, r *http.Request) 
 	}
 	baseClient.OnError = func(_ IClient, err error) {
 		if wsh.OnError != nil {
-			wsh.OnError(client, err)
+			wsh.OnError(client, wrapHubErr("client", err))
 		}
 	}
 	baseClient.OnClose = func(_ IClient) {
@@ -135,5 +135,13 @@ func (wsh *WebSocketHub) Start(route string, port int, opts ...ServerOption) err
 
 	http.HandleFunc(route, wsh.processRequest)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-	return err
+	return wrapHubErr("listen", err)
+}
+
+// wrapHubErr 为 Hub 层错误添加上下文
+func wrapHubErr(operation string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("wshub/hub %s: %w", operation, err)
 }

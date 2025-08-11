@@ -6,12 +6,17 @@ import (
 	"happyAssistant/internal/initialize"
 	"happyAssistant/internal/logger"
 	"happyAssistant/pkg/wshub"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
 func StartWebsocketServer() {
 	hub := wshub.GetInstance()
+	hub.SetClientOptions(
+		wshub.WithReadDeadline(45*time.Second),
+		wshub.WithSupportPing(20*time.Second),
+	)
 
 	// 创建协议控制器
 	protocolController := controller.NewProtocolController()
