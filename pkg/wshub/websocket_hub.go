@@ -93,7 +93,7 @@ func (wsh *WebSocketHub) processRequest(w http.ResponseWriter, r *http.Request) 
 	baseClient, err := NewClient(conn, wsh.clientOptions...)
 	if err != nil {
 		if wsh.OnError != nil {
-			wsh.OnError(nil, wrapHubErr("new client", err))
+			wsh.OnError(nil, err)
 		}
 		return
 	}
@@ -112,7 +112,7 @@ func (wsh *WebSocketHub) processRequest(w http.ResponseWriter, r *http.Request) 
 	}
 	baseClient.OnError = func(_ IClient, err error) {
 		if wsh.OnError != nil {
-			wsh.OnError(client, wrapHubErr("client", err))
+			wsh.OnError(client, err)
 		}
 	}
 	baseClient.OnClose = func(_ IClient) {
