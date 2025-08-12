@@ -82,8 +82,9 @@ func (ProtocolType) EnumDescriptor() ([]byte, []int) {
 type RESP_CODE int32
 
 const (
-	RESP_CODE_ERROR   RESP_CODE = 0 // 操作失败，表示请求处理过程中发生错误
-	RESP_CODE_SUCCESS RESP_CODE = 1 // 操作成功，表示请求已成功处理
+	RESP_CODE_ERROR      RESP_CODE = 0 // 操作失败，表示请求处理过程中发生错误
+	RESP_CODE_SUCCESS    RESP_CODE = 1 // 操作成功，表示请求已成功处理
+	RESP_CODE_APP_UPDATE RESP_CODE = 3 // 客服端版本过低，需要升级app版本号
 )
 
 // Enum value maps for RESP_CODE.
@@ -91,10 +92,12 @@ var (
 	RESP_CODE_name = map[int32]string{
 		0: "ERROR",
 		1: "SUCCESS",
+		3: "APP_UPDATE",
 	}
 	RESP_CODE_value = map[string]int32{
-		"ERROR":   0,
-		"SUCCESS": 1,
+		"ERROR":      0,
+		"SUCCESS":    1,
+		"APP_UPDATE": 3,
 	}
 )
 
@@ -461,10 +464,12 @@ const file_protocol_proto_rawDesc = "" +
 	"\aUNKNOWN\x10\x00\x12\r\n" +
 	"\tLOGIN_REQ\x10\x01\x12\x0e\n" +
 	"\n" +
-	"LOGIN_RESP\x10\x02*#\n" +
+	"LOGIN_RESP\x10\x02*3\n" +
 	"\tRESP_CODE\x12\t\n" +
 	"\x05ERROR\x10\x00\x12\v\n" +
-	"\aSUCCESS\x10\x01B Z\x1eServerFramework/internal/modelb\x06proto3"
+	"\aSUCCESS\x10\x01\x12\x0e\n" +
+	"\n" +
+	"APP_UPDATE\x10\x03B\x1fZ\x1dhappyAssistant/internal/modelb\x06proto3"
 
 var (
 	file_protocol_proto_rawDescOnce sync.Once

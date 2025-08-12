@@ -27,6 +27,7 @@ enum ProtocolType {
 enum RESP_CODE {
   ERROR = 0;    // 操作失败，表示请求处理过程中发生错误
   SUCCESS = 1;  // 操作成功，表示请求已成功处理
+  APP_UPDATE = 3; // 客服端版本过低，需要升级app版本号
 }
 
 // 基础请求协议

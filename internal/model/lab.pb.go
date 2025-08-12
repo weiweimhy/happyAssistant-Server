@@ -165,7 +165,7 @@ const file_lab_proto_rawDesc = "" +
 	".role.RoleR\x05roles\x1a>\n" +
 	"\x10UserRoleMapEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B Z\x1eServerFramework/internal/modelb\x06proto3"
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x1fZ\x1dhappyAssistant/internal/modelb\x06proto3"
 
 var (
 	file_lab_proto_rawDescOnce sync.Once
