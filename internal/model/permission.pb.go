@@ -91,7 +91,7 @@ const file_permission_proto_rawDesc = "" +
 	"\aUNKNOWN\x10\x00\x12\x10\n" +
 	"\fORDER_CREATE\x10\x01\x12\x10\n" +
 	"\fORDER_UPDATE\x10\x02\x12\x10\n" +
-	"\fORDER_DELETE\x10\x04B Z\x1eServerFramework/internal/modelb\x06proto3"
+	"\fORDER_DELETE\x10\x04B\x1fZ\x1dhappyAssistant/internal/modelb\x06proto3"
 
 var (
 	file_permission_proto_rawDescOnce sync.Once

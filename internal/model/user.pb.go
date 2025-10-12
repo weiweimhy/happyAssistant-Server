@@ -144,7 +144,7 @@ const file_user_proto_rawDesc = "" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
 	"updated_at\x18\a \x01(\x03R\tupdatedAt\x12\x17\n" +
-	"\alib_ids\x18\b \x03(\tR\x06libIdsB Z\x1eServerFramework/internal/modelb\x06proto3"
+	"\alib_ids\x18\b \x03(\tR\x06libIdsB\x1fZ\x1dhappyAssistant/internal/modelb\x06proto3"
 
 var (
 	file_user_proto_rawDescOnce sync.Once

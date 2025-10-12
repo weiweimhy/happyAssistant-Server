@@ -27,6 +27,7 @@ enum ProtocolType {
 enum RESP_CODE {
   ERROR = 0;    // 操作失败，表示请求处理过程中发生错误
   SUCCESS = 1;  // 操作成功，表示请求已成功处理
+  APP_UPDATE = 3; // 客服端版本过低，需要升级app版本号
 }
 
 // 基础请求协议
@@ -49,7 +50,13 @@ message BaseResponse {
 // 登录请求协议
 // 客户端发送的登录请求，包含微信小程序登录凭证
 message LoginRequest {
-  string js_code = 1;     // 微信小程序登录凭证，用于获取用户openid和session_key
+  string brand = 1;             // 设备品牌
+  string model = 2;             // 设备型号
+  string wechat_version = 3;    // 微信版本
+  string platform = 4;          // 客户端平台
+  string env_version = 5;       // 小程序环境
+  int32 version = 6;            // 小程序版本
+  string js_code = 7;           // 微信小程序登录凭证，用于获取用户openid和session_key
 }
 
 // 登录响应中的实验室信息

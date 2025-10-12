@@ -97,7 +97,7 @@ const file_role_proto_rawDesc = "" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12)\n" +
-	"\x10permission_flags\x18\x03 \x01(\x04R\x0fpermissionFlagsB Z\x1eServerFramework/internal/modelb\x06proto3"
+	"\x10permission_flags\x18\x03 \x01(\x04R\x0fpermissionFlagsB\x1fZ\x1dhappyAssistant/internal/modelb\x06proto3"
 
 var (
 	file_role_proto_rawDescOnce sync.Once

@@ -82,8 +82,9 @@ func (ProtocolType) EnumDescriptor() ([]byte, []int) {
 type RESP_CODE int32
 
 const (
-	RESP_CODE_ERROR   RESP_CODE = 0 // 操作失败，表示请求处理过程中发生错误
-	RESP_CODE_SUCCESS RESP_CODE = 1 // 操作成功，表示请求已成功处理
+	RESP_CODE_ERROR      RESP_CODE = 0 // 操作失败，表示请求处理过程中发生错误
+	RESP_CODE_SUCCESS    RESP_CODE = 1 // 操作成功，表示请求已成功处理
+	RESP_CODE_APP_UPDATE RESP_CODE = 3 // 客服端版本过低，需要升级app版本号
 )
 
 // Enum value maps for RESP_CODE.
@@ -91,10 +92,12 @@ var (
 	RESP_CODE_name = map[int32]string{
 		0: "ERROR",
 		1: "SUCCESS",
+		3: "APP_UPDATE",
 	}
 	RESP_CODE_value = map[string]int32{
-		"ERROR":   0,
-		"SUCCESS": 1,
+		"ERROR":      0,
+		"SUCCESS":    1,
+		"APP_UPDATE": 3,
 	}
 )
 
@@ -261,7 +264,13 @@ func (x *BaseResponse) GetTimestamp() int64 {
 // 客户端发送的登录请求，包含微信小程序登录凭证
 type LoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	JsCode        string                 `protobuf:"bytes,1,opt,name=js_code,json=jsCode,proto3" json:"js_code,omitempty"` // 微信小程序登录凭证，用于获取用户openid和session_key
+	Brand         string                 `protobuf:"bytes,1,opt,name=brand,proto3" json:"brand,omitempty"`                                      // 设备品牌
+	Model         string                 `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`                                      // 设备型号
+	WechatVersion string                 `protobuf:"bytes,3,opt,name=wechat_version,json=wechatVersion,proto3" json:"wechat_version,omitempty"` // 微信版本
+	Platform      string                 `protobuf:"bytes,4,opt,name=platform,proto3" json:"platform,omitempty"`                                // 客户端平台
+	EnvVersion    string                 `protobuf:"bytes,5,opt,name=env_version,json=envVersion,proto3" json:"env_version,omitempty"`          // 小程序环境
+	Version       int32                  `protobuf:"varint,6,opt,name=version,proto3" json:"version,omitempty"`                                 // 小程序版本
+	JsCode        string                 `protobuf:"bytes,7,opt,name=js_code,json=jsCode,proto3" json:"js_code,omitempty"`                      // 微信小程序登录凭证，用于获取用户openid和session_key
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -294,6 +303,48 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
 	return file_protocol_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *LoginRequest) GetBrand() string {
+	if x != nil {
+		return x.Brand
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetModel() string {
+	if x != nil {
+		return x.Model
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetWechatVersion() string {
+	if x != nil {
+		return x.WechatVersion
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetPlatform() string {
+	if x != nil {
+		return x.Platform
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetEnvVersion() string {
+	if x != nil {
+		return x.EnvVersion
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetVersion() int32 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
 }
 
 func (x *LoginRequest) GetJsCode() string {
@@ -442,9 +493,16 @@ const file_protocol_proto_rawDesc = "" +
 	"\x06result\x18\x02 \x01(\x0e2\x10.model.RESP_CODER\x06result\x12\x10\n" +
 	"\x03msg\x18\x03 \x01(\tR\x03msg\x12\x12\n" +
 	"\x04data\x18\x04 \x01(\fR\x04data\x12\x1c\n" +
-	"\ttimestamp\x18\x05 \x01(\x03R\ttimestamp\"'\n" +
-	"\fLoginRequest\x12\x17\n" +
-	"\ajs_code\x18\x01 \x01(\tR\x06jsCode\"\x97\x01\n" +
+	"\ttimestamp\x18\x05 \x01(\x03R\ttimestamp\"\xd1\x01\n" +
+	"\fLoginRequest\x12\x14\n" +
+	"\x05brand\x18\x01 \x01(\tR\x05brand\x12\x14\n" +
+	"\x05model\x18\x02 \x01(\tR\x05model\x12%\n" +
+	"\x0ewechat_version\x18\x03 \x01(\tR\rwechatVersion\x12\x1a\n" +
+	"\bplatform\x18\x04 \x01(\tR\bplatform\x12\x1f\n" +
+	"\venv_version\x18\x05 \x01(\tR\n" +
+	"envVersion\x12\x18\n" +
+	"\aversion\x18\x06 \x01(\x05R\aversion\x12\x17\n" +
+	"\ajs_code\x18\a \x01(\tR\x06jsCode\"\x97\x01\n" +
 	"\fLoginLabInfo\x12\x1a\n" +
 	"\x03lab\x18\x01 \x01(\v2\b.lab.LabR\x03lab\x12 \n" +
 	"\x05roles\x18\x02 \x03(\v2\n" +
@@ -461,10 +519,12 @@ const file_protocol_proto_rawDesc = "" +
 	"\aUNKNOWN\x10\x00\x12\r\n" +
 	"\tLOGIN_REQ\x10\x01\x12\x0e\n" +
 	"\n" +
-	"LOGIN_RESP\x10\x02*#\n" +
+	"LOGIN_RESP\x10\x02*3\n" +
 	"\tRESP_CODE\x12\t\n" +
 	"\x05ERROR\x10\x00\x12\v\n" +
-	"\aSUCCESS\x10\x01B Z\x1eServerFramework/internal/modelb\x06proto3"
+	"\aSUCCESS\x10\x01\x12\x0e\n" +
+	"\n" +
+	"APP_UPDATE\x10\x03B\x1fZ\x1dhappyAssistant/internal/modelb\x06proto3"
 
 var (
 	file_protocol_proto_rawDescOnce sync.Once
