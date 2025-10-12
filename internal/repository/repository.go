@@ -82,10 +82,17 @@ func FindOne[T proto.Message](collection *mongo.Collection, filter interface{}) 
 	ctx, cancel := context.WithTimeout(context.Background(), config.Cfg.MongoDB.OpTimeout)
 	defer cancel()
 
-	// 创建T类型的零值
+	// 创建T类型的新实例
 	var result T
-	// 使用反射创建T的新实例
-	result = proto.Clone(result).(T)
+	t := reflect.TypeOf(result)
+	if t.Kind() == reflect.Ptr {
+		// 指针类型，创建指向的类型的实例
+		elem := reflect.New(t.Elem())
+		result = elem.Interface().(T)
+	} else {
+		// 非指针类型，零值就是新实例
+		result = reflect.Zero(t).Interface().(T)
+	}
 
 	err := collection.FindOne(ctx, filter).Decode(result)
 	if err != nil {
